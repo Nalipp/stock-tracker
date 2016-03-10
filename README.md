@@ -72,7 +72,31 @@ end
 <h1>My Portfolio</h1>
 <br>change routes
 <br>  get 'welcome_index', to: 'welcome#index'
-  root 'users#my_portfolio'
+<br>  root 'users#my_portfolio'
+<br>
+<br>Now we will add the two class level methods to the stock.rb model
+<br>file under app/models folder and an third price method:
+<br>def self.find_by_ticker(ticker_symbol)
+<br>where(ticker: ticker_symbol).first
+<br>end
+<br>def self.new_from_lookup(ticker_symbol)
+<br>looked_up_stock = StockQuote::Stock.quote(ticker_symbol)
+<br>return nil unless looked_up_stock.name
+<br>new_stock = new(ticker: looked_up_stock.symbol, name:
+<br>looked_up_stock.name)
+<br>new_stock.last_price = new_stock.price
+<br>new_stock
+<br>end
+<br>def price
+<br>closing_price = StockQuote::Stock.quote(ticker).close
+<br>return "#{closing_price} (Closing)" if closing_price
+<br>opening_price = StockQuote::Stock.quote(ticker).open
+<br>return "#{opening_price} (Opening)" if opening_price
+<br>'Unavailable'
+<br>end
+<br>We are adding the self. prior to the method name, because these methods are not tied to any objects or object lifecycle, we need to be able to use them without having any instances of a stock.
+<br>
+<br>
 <br>
 <br>
 <br>
