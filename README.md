@@ -8,7 +8,7 @@ https://www.udemy.com/the-complete-ruby-on-rails-developer-course/learn/#/lectur
 4. In your production group add in gem pg (postgres) and rails_12factor to make your app heroku ready
 5. Run bundle install --without production to update your .gemfile.lock file
 6. Create a welcome controller, a root route for welcome#index, an index action in your welcome_controller.rb file (should be empty at this time)
-<!-- 7. Create a welcome folder under your app/views/ folder and within the folder create an index.html.erb file and fill it in with <h1>Welcome to the finance tracker app</h1> -->
+7. Create a welcome folder under your app/views/ folder and within the folder create an index.html.erb file and fill it in with <code><h1>Welcome to the finance tracker app</h1></code>
 8. Preview your app and ensure it goes to this page in local development
 9. Commit your code to your git repo
 10. Push your code to your github repo
