@@ -8,7 +8,7 @@ https://www.udemy.com/the-complete-ruby-on-rails-developer-course/learn/#/lectur
 4. In your production group add in gem pg (postgres) and rails_12factor to make your app heroku ready
 5. Run bundle install --without production to update your .gemfile.lock file
 6. Create a welcome controller, a root route for welcome#index, an index action in your welcome_controller.rb file (should be empty at this time)
-7. Create a welcome folder under your app/views/ folder and within the folder create an index.html.erb file and fill it in with <code><h1>Welcome to the finance tracker app</h1></code>
+7. Create a welcome folder under your app/views/ folder and within the folder create an index.html.erb file and fill it in with <h1>Welcome to the finance tracker app</h1>
 8. Preview your app and ensure it goes to this page in local development
 9. Commit your code to your git repo
 10. Push your code to your github repo
@@ -47,4 +47,32 @@ https://www.udemy.com/the-complete-ruby-on-rails-developer-course/learn/#/lectur
 <br>$heroku logs
 <br>$heroku run rails console
 <br>A problem faced here by students is after adding the before_action :authenticate_user! in the application controller, the check doesn't seem to be working. Also, the logout link may generate an error "No route matches [GET] "/users/sign_out" even with the method: :delete. If you face this error, the issue may be the following: The welcome controller was inheriting from ActionController::Base instead of ApplicationController, once you correct this it should work
+<br>
+<br>Remove the sidebar div from the application.html.erb file under app/views/layouts folder
+<br>Remove(or code out) the following code for forgot your password link from the _links.html.erb partial under the app/views/devise/shared folder:
+<%- if devise_mapping.recoverable? && controller_name != 'passwords' %>
+<%= link_to t(".forgot_your_password", :default => "Forgot your password?"), new_password_path(resource_name)
+%><br />
+<% end -%>
+<br>rails g model Stock ticker:string name:string last_price:decimal
+<br>Create the table by running the migration:
+<br>rake db:migrate
+<br>Add gem 'stock_quote' to your gemfile and run bundle install --without production
+<br>Hop on rails console to get stock price for a stock:
+<br>StockQuote::Stock.quote("symbol").open
+<br>StockQuote::Stock.quote("symbol").previous_close
+<br>Now need to add a view page for my portfolio, we'll call it my portfolio, so go to config/routes.rb file and add in the following route:
+<br>get 'my_portfolio', to: 'users#my_portfolio'
+<br>Create a users_controller.rb file under app/controllers and add in my_portfolio action:
+<br>class UsersController < ApplicationController
+def my_portfolio
+end
+end
+<br>under views add users folder and under it create a my_portfolio.html.erb file and fill it in:
+<h1>My Portfolio</h1>
+<br>change routes
+<br>  get 'welcome_index', to: 'welcome#index'
+  root 'users#my_portfolio'
+<br>
+<br>
 <br>
