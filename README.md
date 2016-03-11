@@ -95,6 +95,82 @@ end
 <br>'Unavailable'
 <br>end
 <br>We are adding the self. prior to the method name, because these methods are not tied to any objects or object lifecycle, we need to be able to use them without having any instances of a stock.
+<br>First add a route to your config/routes.rb file to search stocks:
+<br>get 'search_stocks', to: 'stocks#search'
+<br>Now we add a stocks_controller.rb file under app/controllers and within it we define a search method. We are putting the search method in the stocks_controller because we want to have an easy way to search for stocks from our view, so we'll call it from there:
+<br>class StocksController < ApplicationController
+<br>def search
+<br>if params[:stock]
+<br>@stock = Stock.find_by_ticker(params[:stock])
+<br>@stock ||= Stock.new_from_lookup(params[:stock])
+<br>end
+<br>if @stock
+<br>render partial: 'lookup'
+<br>else
+<br>render status: :not_found, nothing: true
+<br>end
+<br>end
+<br>end
+<br>To temporarily view output from the browser, code out the render partial: 'lookup' line and add in the following line under it:
+<br>render json: @stock
+<br>Now we will create the lookup partial, create a stocks folder under app/views folder and within it create a file named _lookup.html.erb
+<br>a. build the form_tag
+<br><div id="stock-lookup">
+<br><h3>Search for Stocks</h3>
+<br><%= form_tag search_stocks_path, remote: true, method: :get, id: 'stock-lookup-form' do %>
+<br><div class="form-group row no-padding text-center col-md-12">
+<br><div class="col-md-10">
+<br><%= text_field_tag :stock,
+<br>params[:stock],
+<br>placeholder: 'Stock Ticker Symbol',
+<br>autofocus: true,
+<br>class: 'form-control search-box input-lg' %>
+<br></div>
+<br><div class="col-md-2">
+<br><%= button_tag(type: :submit, class: 'btn btn-lg btn-success') do %>
+<br><i class='fa fa-search'></i> Look up a stock
+<br><% end %>
+<br></div>
+<br></div>
+<br><% end %>
+<br></div>
+<br>Go to my_portfolio.html.erb under app/views/users and add the following line just to show the form:
+<br><%= render 'stocks/lookup' %>
+<br>Now lets add the rest of the code to the lookup partial under app/views/stocks folder->
+<br>So if we have @stock instance variable then we want to do something with it, add the code below under the <% end %> and above the last
+<br><% if @stock %>
+<br><div id="stock-lookup-results" class="well results-block">
+<br><strong>Symbol:</strong> <%= @stock.ticker %>
+<br><strong>Name:</strong> <%= @stock.name %>
+<br><strong>Price:</strong> <%= @stock.price %>
+<br></div>
+<br><% end %>
+<br>
+<br>Now that we have the id's and the form that submits via ajax, we want to handle the return of that ajax action so we create a stocks.js file in app/assets/javascripts folder
+<br>$(document).ready(function() {
+<br>init_stock_lookup();
+<br>})
+<br>then above it we type in:
+<br>var init_stock_lookup;
+<br>init_stock_lookup = function(){
+<br>$('#stock-lookup-form').on('ajax:success', function(event, data, status){
+<br>$('#stock-lookup').replaceWith(data);
+<br>init_stock_lookup();
+<br>});
+<br>}
+<br>You need to add the init_stock_lookup(); again since the listeners are gone once you replace with the data that's returned so you have to re-initialize it.
+Now go to my_portfolio URL from the browser and test out a few stock symbols
+<br>Next create a custom.css.scss file under app/assets/stylesheets folder and add some styling:
+<br>.results-block {
+<br>display: inline-block;
+<br>}
+<br>Now next thing we want to handle are errors, add the following to stocks.js file above the closing } for the init_stock_lookup = function()
+<br>$('#stock-lookup-form').on('ajax:error', function(event, xhr, status, error){
+<br>$('#stock-lookup-results').replaceWith('');
+<br>$('#stock-lookup-errors').replaceWith('Stock was not found.');
+<br>});
+<br>Add the following to lookup partial after the <% end %> and above the last </div>:
+<br><div id="stock-lookup-errors"></div>
 <br>
 <br>
 <br>
